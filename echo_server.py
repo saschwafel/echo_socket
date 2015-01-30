@@ -8,20 +8,30 @@ def server(log_buffer=sys.stderr):
     # TODO: Replace the following line with your code which will instantiate
     #       a TCP socket with IPv4 Addressing, call the socket you make 'sock'
     sock = None
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
+
     # TODO: Set an option to allow the socket address to be reused immediately
     #       see the end of http://docs.python.org/2/library/socket.html
 
+    sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # log that we are building a server
     print >>log_buffer, "making a server on {0}:{1}".format(*address)
 
-    # TODO: bind your new sock 'sock' to the address above and begin to listen
-    #       for incoming connections
+    # TODO: bind your new sock 'sock' to the address above
+
+    sock.bind(address)
+
+    # begin to listen for incoming connections
+    sock.listen(1)
 
     try:
         # the outer loop controls the creation of new connection sockets. The
         # server will handle each incoming connection one at a time.
         while True:
             print >>log_buffer, 'waiting for a connection'
+
+#Double check this
+            conn, client_address = sock.accept()
 
             # TODO: make a new socket when a client connects, call it 'conn',
             #       at the same time you should be able to get the address of
