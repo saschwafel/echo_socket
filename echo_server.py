@@ -36,7 +36,9 @@ def server(log_buffer=sys.stderr):
             #       the client so we can report it below.  Replace the
             #       following line with your code. It is only here to prevent
             #       syntax errors
-            #addr = ('bar', 'baz')
+
+            addr = conn.getpeername() 
+            
             try:
                 print >>log_buffer, 'connection - {0}:{1}'.format(*addr)
 
