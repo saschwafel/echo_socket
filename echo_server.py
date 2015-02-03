@@ -7,21 +7,29 @@ def server(log_buffer=sys.stderr):
     address = ('127.0.0.1', 10000)
     # TODO: Replace the following line with your code which will instantiate
     #       a TCP socket with IPv4 Addressing, call the socket you make 'sock'
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
 
     # TODO: Set an option to allow the socket address to be reused immediately
     #       see the end of http://docs.python.org/2/library/socket.html
 
     sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
     # log that we are building a server
     print >>log_buffer, "making a server on {0}:{1}".format(*address)
 
     # TODO: bind your new sock 'sock' to the address above
 
-    sock.bind(address)
+    try: 
+        
+        sock.bind(address)
 
-    # begin to listen for incoming connections
-    sock.listen(1)
+        # begin to listen for incoming connections
+        sock.listen(1)
+    
+    except socket.error as error_message:
+        sock.close()
+
 
     try:
         # the outer loop controls the creation of new connection sockets. The
@@ -29,7 +37,11 @@ def server(log_buffer=sys.stderr):
         while True:
             print >>log_buffer, 'waiting for a connection'
 
+            #addr = conn.getpeername() 
+
             conn, addr = sock.accept()
+
+            print addr
 
             # TODO: make a new socket when a client connects, call it 'conn',
             #       at the same time you should be able to get the address of
@@ -37,7 +49,8 @@ def server(log_buffer=sys.stderr):
             #       following line with your code. It is only here to prevent
             #       syntax errors
 
-            addr = conn.getpeername() 
+
+            
             
             try:
                 print >>log_buffer, 'connection - {0}:{1}'.format(*addr)
@@ -51,9 +64,11 @@ def server(log_buffer=sys.stderr):
                     #       following line with your code.  It's only here as
                     #       a placeholder to prevent an error in string
                     #       formatting
-
                     data = conn.recv(16)
 
+                    conn.sendall(data)
+
+                    #print data
                     if not data: 
                         break
 
@@ -62,8 +77,8 @@ def server(log_buffer=sys.stderr):
                     #       received.  
 
 
-                    conn.sendall(data)
-                conn.close()
+                    #conn.sendall("message received")
+
 
             finally:
                 # TODO: When the inner loop exits, this 'finally' clause will
@@ -73,7 +88,7 @@ def server(log_buffer=sys.stderr):
                 #       syntax problems
 
 
-                sock.close()
+                conn.close()
 
     except KeyboardInterrupt:
         # TODO: Use the python KeyboardIntterupt exception as a signal to

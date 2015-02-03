@@ -7,12 +7,13 @@ def client(msg, log_buffer=sys.stderr):
     # TODO: Replace the following line with your code which will instantiate
     #       a TCP socket with IPv4 Addressing, call the socket you make 'sock'
 
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM, socket.IPPROTO_IP))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
 
     print >>log_buffer, 'connecting to {0} port {1}'.format(*server_address)
     # TODO: connect your socket to the server here.
 
-    sock.connect(('localhost',10000))
+    #sock.connect(('localhost',10000))
+    sock.connect(server_address)
 
     # this try/finally block exists purely to allow us to close the socket
     # when we are finished with it
@@ -21,7 +22,8 @@ def client(msg, log_buffer=sys.stderr):
         print >>log_buffer, 'sending "{0}"'.format(msg)
         # TODO: send your message to the server here.
 
-        sock.sendall("Hey, can you hear me?")
+        message = sys.argv[1] 
+        sock.sendall(message)
 
         
         # TODO: the server should be sending you back your message as a series
@@ -33,9 +35,32 @@ def client(msg, log_buffer=sys.stderr):
         #       Make sure that you log each chunk you receive.  Use the print
         #       statement below to do it. (The tests expect this log format)
 
-        chunk = ''
+        #chunk = ''
+        complete_message = []
 
-        print >>log_buffer, 'received "{0}"'.format(chunk)
+        while True: 
+
+            chunk = sock.recv(16)
+
+            complete_message.append(chunk)
+
+            print 'received chunk:', chunk
+
+
+            if len(chunk) < 16:
+                
+                complete_message = ''.join(complete_message)
+                print 'The complete message is: ', complete_message
+
+                #print 'the original message is ', sys.argv[1]
+                #print 'the complete_message is ', complete_message
+
+                if complete_message == message:
+                    print 'The message was echoed successfully!\n'
+
+                sock.close()
+                break
+
 
     finally:
 
@@ -43,6 +68,7 @@ def client(msg, log_buffer=sys.stderr):
         #       the server you will want to close your client socket.
         print >>log_buffer, 'closing socket'
 
+        sock.close()
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
