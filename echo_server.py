@@ -7,7 +7,6 @@ def server(log_buffer=sys.stderr):
     address = ('127.0.0.1', 10000)
     # TODO: Replace the following line with your code which will instantiate
     #       a TCP socket with IPv4 Addressing, call the socket you make 'sock'
-    sock = None
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
 
     # TODO: Set an option to allow the socket address to be reused immediately
@@ -30,15 +29,14 @@ def server(log_buffer=sys.stderr):
         while True:
             print >>log_buffer, 'waiting for a connection'
 
-#Double check this
-            conn, client_address = sock.accept()
+            conn, addr = sock.accept()
 
             # TODO: make a new socket when a client connects, call it 'conn',
             #       at the same time you should be able to get the address of
             #       the client so we can report it below.  Replace the
             #       following line with your code. It is only here to prevent
             #       syntax errors
-            addr = ('bar', 'baz')
+            #addr = ('bar', 'baz')
             try:
                 print >>log_buffer, 'connection - {0}:{1}'.format(*addr)
 
@@ -51,12 +49,19 @@ def server(log_buffer=sys.stderr):
                     #       following line with your code.  It's only here as
                     #       a placeholder to prevent an error in string
                     #       formatting
-                    data = ''
+
+                    data = conn.recv(16)
+
+                    if not data: 
+                        break
+
                     print >>log_buffer, 'received "{0}"'.format(data)
                     # TODO: you will need to check here to see if any data was
-                    #       received.  If so, send the data you got back to
-                    #       the client.  If not, exit the inner loop and wait
-                    #       for a new connection from a client
+                    #       received.  
+
+
+                    conn.sendall(data)
+                conn.close()
 
             finally:
                 # TODO: When the inner loop exits, this 'finally' clause will
@@ -64,14 +69,16 @@ def server(log_buffer=sys.stderr):
                 #       created above when a client connected.  Replace the
                 #       call to `pass` below, which is only there to prevent
                 #       syntax problems
-                pass
+
+
+                sock.close()
 
     except KeyboardInterrupt:
         # TODO: Use the python KeyboardIntterupt exception as a signal to
         #       close the server socket and exit from the server function.
         #       Replace the call to `pass` below, which is only there to
         #       prevent syntax problems
-        pass
+        sock.close()
 
 
 if __name__ == '__main__':
