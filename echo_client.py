@@ -22,7 +22,8 @@ def client(msg, log_buffer=sys.stderr):
         print >>log_buffer, 'sending "{0}"'.format(msg)
         # TODO: send your message to the server here.
 
-        message = sys.argv[1] 
+        #message = sys.argv[1] 
+        message = msg
         sock.sendall(message)
 
         
@@ -35,7 +36,7 @@ def client(msg, log_buffer=sys.stderr):
         #       Make sure that you log each chunk you receive.  Use the print
         #       statement below to do it. (The tests expect this log format)
 
-        #chunk = ''
+        chunk = ''
         complete_message = []
 
         while True: 
