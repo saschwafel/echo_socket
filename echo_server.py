@@ -66,11 +66,12 @@ def server(log_buffer=sys.stderr):
                     #       formatting
                     data = conn.recv(16)
 
+                    if not data: 
+                        break
+
                     conn.sendall(data)
 
                     #print data
-                    if not data: 
-                        break
 
                     print >>log_buffer, 'received "{0}"'.format(data)
                     # TODO: you will need to check here to see if any data was

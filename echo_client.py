@@ -45,8 +45,9 @@ def client(msg, log_buffer=sys.stderr):
 
             complete_message.append(chunk)
 
-            print 'received chunk:', chunk
+            #print 'received chunk:', chunk
 
+            print >>log_buffer, 'received "{0}"'.format(chunk)
 
             if len(chunk) < 16:
                 
